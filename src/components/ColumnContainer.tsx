@@ -2,21 +2,26 @@ import { useSortable } from "@dnd-kit/sortable";
 import TrashIcon from "../icons/TrashIcon";
 import { Column, Id } from "../type";
 import {CSS} from "@dnd-kit/utilities"
+import { useState } from "react";
   
 interface Props{
     column : Column;
     deleteColumn : (id : Id) => void
+    updateColumn : (id: Id, title : string) => void
 }
 
 export default function ColumnContainer(props : Props){
- const {column, deleteColumn} = props 
+ const {column, deleteColumn, updateColumn} = props 
+
+ const [editmode, setEditMode] = useState(false)
 
   const {setNodeRef, transition, attributes, listeners, transform, isDragging} =  useSortable({
         id : column.id,
         data : {
             type : "Column",
             column
-        }
+        },
+        disabled: editmode
      })
 
      const style = {
@@ -38,11 +43,26 @@ export default function ColumnContainer(props : Props){
         <div
         {...attributes}
         {...listeners}
+        onClick={()=> {
+            setEditMode(true)
+        }}
          className="bg-mainBackgroundColour text-md h-[60px] cursor-grab rounded-md rounded-b-none
          p-3 font-semibold border-columnBackgroundColour border-4 flex items-center justify-between">
         <div className="flex gap-2">
         <div className="flex justify-center items-center bg-columnBackgroundColour px-2 py-1 text-sm rounded-full ">0</div>
-        {column.title}
+              {!editmode &&  column.title}
+              {editmode && <input className="bg-black border-rose-500 border-rounded outline-none px-2"
+              value={column.title}
+              onChange={(e) => updateColumn(column.id, e.target.value)}
+               autoFocus
+                onBlur={()=> {
+                setEditMode(false)
+              }}
+              onKeyDown={(e)=> {
+                if(e.key !== "Enter") return
+                 setEditMode(false)
+              }}
+              />}
         </div>
         <button onClick={()=>{
             deleteColumn(column.id)
