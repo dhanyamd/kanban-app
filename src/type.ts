@@ -5,3 +5,9 @@ export type Column = {
     title : string 
 
 }
+
+export type Task = {
+    id : Id,
+    columnId : Id,
+    content : string 
+}
