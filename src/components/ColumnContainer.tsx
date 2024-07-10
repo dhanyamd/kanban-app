@@ -4,6 +4,7 @@ import { Column, Id, Task } from "../type";
 import {CSS} from "@dnd-kit/utilities"
 import { useState } from "react";
 import PlusIcon from "../icons/Plusicon";
+import { TaskCard } from "./TaskCard";
   
 interface Props{
     column : Column;
@@ -11,10 +12,11 @@ interface Props{
     updateColumn : (id: Id, title : string) => void
     createTask : (columnId : Id) => void 
     tasks : Task[]
+    deleteTask : (id : Id) => void
 }
 
 export default function ColumnContainer(props : Props){
- const {column, deleteColumn, updateColumn, createTask, tasks} = props 
+ const {column, deleteColumn, updateColumn, createTask, tasks, deleteTask} = props 
 
  const [editmode, setEditMode] = useState(false)
 
@@ -41,6 +43,7 @@ export default function ColumnContainer(props : Props){
         )
        
      }
+
 
     return <div ref={setNodeRef} style={style} className="bg-columnBackgroundColour w-[350px] h-[500px] max-h-[500px] rounded-lg flex flex-col">
         <div
@@ -72,9 +75,9 @@ export default function ColumnContainer(props : Props){
         }} className="stroke-gray-500 hover:stroke-white hover:bg-mainBackgroundColour
         rounded px-1 py-2"><TrashIcon/></button>
         </div>
-        <div className="flex flex-grow">
+        <div className="flex flex-grow flex-col gap-4 p-2 overflow-x-hidden overflow-y-auto">
             {tasks.map((task)=> (
-                <div key={task.id}>{task.content}</div>
+                <TaskCard key={task.id} task={task} deleteTask={deleteTask}/>
             ))}
         </div>
             <button className="flex gap-2 items-center border-columnBackgroundColor border-1 rounded-md p-4 
